@@ -3,8 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://conradyen1.github.io/bilt-calculator/",
   "scripts": {
     "dev": "vite",
+    "predeploy": "npm run build",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",

@@ -179,7 +179,7 @@ function ResultCard({ card, i }: { card: Card; i: Inputs }) {
 
   const annualFee = card.annualFee;
 
-  const annualSpend = yearly(amounts.total);
+  // const annualSpend = yearly(amounts.total);
 
   const annualO1 = {
     rentPts: yearly(o1.rentPts),
