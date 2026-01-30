@@ -67,9 +67,25 @@ function categoryPercents(i: Inputs) {
   return { dining, grocery, travel, other, sum };
 }
 
+function normalizedPercents(i: Inputs) {
+  const p = categoryPercents(i);
+  if (p.sum <= 100) {
+    return p;
+  }
+
+  const scale = p.sum > 0 ? 100 / p.sum : 0;
+  return {
+    dining: p.dining * scale,
+    grocery: p.grocery * scale,
+    travel: p.travel * scale,
+    other: 0,
+    sum: 100,
+  };
+}
+
 function categoryAmounts(i: Inputs) {
   const total = clamp0(i.totalSpend);
-  const p = categoryPercents(i);
+  const p = normalizedPercents(i);
 
   const dining = (total * p.dining) / 100;
   const grocery = (total * p.grocery) / 100;
@@ -121,8 +137,12 @@ function rentPointsOption2(i: Inputs) {
   const rent = clamp0(i.rent);
   const totalSpend = clamp0(i.totalSpend);
 
+  if (CASHBACK_RATE <= 0 || CASH_PER_POINT <= 0) {
+    return { rentPts: 0, extraSpendNeeded: 0, biltCashEarned: 0 };
+  }
+
   const cash = totalSpend * CASHBACK_RATE;
-  const unlockablePts = CASH_PER_POINT <= 0 ? 0 : cash / CASH_PER_POINT;
+  const unlockablePts = cash / CASH_PER_POINT;
   const rentPts = Math.min(rent, unlockablePts);
 
   const requiredSpend = rent * (CASH_PER_POINT / CASHBACK_RATE); // 0.75 * rent
@@ -178,8 +198,6 @@ function ResultCard({ card, i }: { card: Card; i: Inputs }) {
   const totalO2 = spendPts + o2.rentPts;
 
   const annualFee = card.annualFee;
-
-  const annualSpend = yearly(amounts.total);
 
   const annualO1 = {
     rentPts: yearly(o1.rentPts),
